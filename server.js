@@ -16,7 +16,7 @@ if(!redisClient.get('customer_name',redis.print)) {
     console.log(`Reading property : customer_name - ${val}`);
 }
 
-const PORT = 5001;
+const PORT = 4500;
 
 const app = express();
 const router = express.Router();
@@ -29,6 +29,47 @@ router.get('/', (req,res) => {
         message : "Sample Docker Redis Application"
     });
 });
+
+router.get("/get", async (req, res) => {
+    try {
+        const val = await redisClient.get(req.query.key)
+        res.status(200).send({
+            status: 200,
+            success: true,
+            message: "",
+            data: {},
+        })
+    } catch (e) {
+        console.log(e)
+        res.status(500).send({
+            status: 500,
+            success: false,
+            message: e.message,
+            data: {},
+        })
+    }
+})
+
+router.post("/set", async (req, res) => {
+    try {
+        const val = await redisClient.set(req.query.key, req.query.value)
+        res.status(200).send({
+            status: 200,
+            success: true,
+            message: "",
+            data: {},
+        })
+    } catch (e) {
+        console.log(e)
+        res.status(500).send({
+            status: 500,
+            success: false,
+            message: e.message,
+            data: {},
+        })
+    }
+})
+
 
 app.listen(PORT, () => {
     console.log(`Server running on PORT ${PORT}`);
