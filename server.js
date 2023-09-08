@@ -91,6 +91,15 @@ router.post("/set", async (req, res) => {
     }
 })
 
+app.all("*", (req, res, next) => {
+  return res.status(404).json({
+    status: 404,
+    success: false,
+    message: `can't find ${req.originalUrl} on this server`,
+    data: {},
+  });
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server running on PORT ${PORT}`);
