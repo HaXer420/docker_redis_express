@@ -33,7 +33,8 @@ router.get('/', (req,res) => {
 router.get("/get", async (req, res) => {
     try {
         const val = redisClient.get(req.query.key, val => {
-            console.log(req.query.key, val)
+            const value = await client.get('key');
+            console.log(req.query.key, value, val)
             res.status(200).send({
                 status: 200,
                 success: true,
