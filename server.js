@@ -26,10 +26,10 @@ redisClient.on('error', (err) => {
 });
 if(!redisClient.get('customer_name',redis.print)) {
     //create a new record
-    redisClient.set('customer_name','John Doe', redis.print);
+    await redisClient.set('customer_name','John Doe', redis.print);
     console.log('Writing Property : customer_name');
 } else {
-    let val = redisClient.get('customer_name',redis.print);
+    let val = await redisClient.get('customer_name',redis.print);
     console.log(`Reading property : customer_name - ${val}`);
 }
 
