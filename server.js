@@ -1,7 +1,7 @@
 const express = require('express');
 const redis = require('redis');
 
-const MockRedis {
+class MockRedis {
     constructor() {
         this.cache = {}
     }
