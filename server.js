@@ -71,10 +71,10 @@ router.get("/get", async (req, res) => {
     }
 })
 
-router.get("/set", async (req, res) => {
+router.post("/set", async (req, res) => {
     try {
         console.log("HIT GET /set", req.query)
-        const val = await redisClient.set(decodeURIComponent(req.query.key), decodeURIComponent(req.query.value))
+        const val = await redisClient.set(req.body.key, req.body.value)
         console.log(redisClient.cache)
         res.status(200).send({
             status: 200,
