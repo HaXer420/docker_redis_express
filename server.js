@@ -26,7 +26,7 @@ redisClient.on('error', (err) => {
 });
 
 (async () => {
-    if(!redisClient.get('customer_name',redis.print)) {
+    if(!(await redisClient.get('customer_name',redis.print))) {
         //create a new record
         await redisClient.set('customer_name','John Doe', redis.print);
         console.log('Writing Property : customer_name');
