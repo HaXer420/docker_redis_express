@@ -72,7 +72,7 @@ router.get("/get", async (req, res) => {
 
 router.post("/set", async (req, res) => {
     try {
-        const val = await redisClient.set(req.query.key, req.query.value)
+        const val = await redisClient.set(decodeURIComponent(req.query.key), decodeURIComponent(req.query.value))
         res.status(200).send({
             status: 200,
             success: true,
