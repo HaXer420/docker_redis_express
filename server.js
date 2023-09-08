@@ -45,7 +45,7 @@ router.get("/get", async (req, res) => {
             status: 500,
             success: false,
             message: e.message,
-            data: {},
+            data: { val },
         })
     }
 })
@@ -57,7 +57,7 @@ router.post("/set", async (req, res) => {
             status: 200,
             success: true,
             message: "",
-            data: {},
+            data: { val },
         })
     } catch (e) {
         console.log(e)
