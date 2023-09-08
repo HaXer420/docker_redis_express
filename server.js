@@ -52,6 +52,7 @@ router.get('/', (req,res) => {
 
 router.get("/get", async (req, res) => {
     try {
+        console.log("HIT GET /get", req.query)
         const val = await redisClient.get(decodeURIComponent(req.query.key))
         res.status(200).send({
             status: 200,
@@ -72,6 +73,7 @@ router.get("/get", async (req, res) => {
 
 router.post("/set", async (req, res) => {
     try {
+        console.log("HIT GET /set", req.query)
         const val = await redisClient.set(decodeURIComponent(req.query.key), decodeURIComponent(req.query.value))
         console.log(redisClient.cache)
         res.status(200).send({
