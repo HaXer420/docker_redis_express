@@ -1,21 +1,22 @@
 const express = require('express');
 const redis = require('redis');
 
-const redisClient = redis.createClient(6379,'127.0.0.1');
+const MockRedis {
+    constructor() {
+        this.cache = {}
+    }
 
-redisClient.on('error', (err) => {
-    console.log('Error occured while connecting or accessing redis server');
-});
+    set(k, v, cb) {
+        this.cache[k] = v
+        if(cb) cb()
+    }
 
-if(!redisClient.get('customer_name',redis.print)) {
-    //create a new record
-    redisClient.set('customer_name','John Doe', redis.print);
-    console.log('Writing Property : customer_name');
-} else {
-    let val = redisClient.get('customer_name',redis.print);
-    console.log(`Reading property : customer_name - ${val}`);
+    async get(k) {
+        return this.cache[k] ?? null
+    }
 }
 
+const redisClient = new MockRedis()
 const PORT = 4500;
 
 const app = express();
@@ -32,16 +33,13 @@ router.get('/', (req,res) => {
 
 router.get("/get", async (req, res) => {
     try {
-        const value = await redisClient.get(req.query.key)
-        const val = redisClient.get(req.query.key, val => {
-            console.log(req.query.key, value, val)
-            res.status(200).send({
-                status: 200,
-                success: true,
-                message: "",
-                data: { val },
-            })  
-        })
+        const val = await redisClient.get(req.query.key)
+        res.status(200).send({
+            status: 200,
+            success: true,
+            message: "",
+            data: { val },
+        })  
     } catch (e) {
         console.log(e)
         res.status(500).send({
