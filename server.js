@@ -1,5 +1,6 @@
 const express = require('express');
 const redis = require('redis');
+const cors = require('cors');
 
 class MockRedis {
     constructor() {
@@ -41,6 +42,9 @@ const PORT = 4500;
 const app = express();
 const router = express.Router();
 
+app.use(cors({
+    origin: "*"
+}));
 app.use(express.json());
 app.use(router);
 
