@@ -45,7 +45,8 @@ const router = express.Router();
 app.use(cors({
     origin: "*"
 }));
-app.use(express.json());
+app.use(bodyParser.json({limit: "500mb"}));
+app.use(bodyParser.urlencoded({limit: "500mb", extended: true, parameterLimit:500000}));
 app.use(router);
 
 router.get('/', (req,res) => {
