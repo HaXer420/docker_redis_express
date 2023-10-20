@@ -61,7 +61,9 @@ router.get("/", (req, res) => {
 router.get("/get", async (req, res) => {
   try {
     console.log("HIT GET /get", req.query);
-    const val = await redisClient.get(decodeURIComponent(req.query.key));
+    console.log("HIT GET KEY /get", req.query.key);
+    const val = await redisClient.get(req.query.key);
+    console.log("Val", val);
     res.status(200).send({
       status: 200,
       success: true,
