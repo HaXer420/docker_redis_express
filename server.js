@@ -112,6 +112,28 @@ router.post("/set", async (req, res) => {
   }
 });
 
+router.post("/del", async (req, res) => {
+  try {
+    console.log("HIT GET /set", req.query);
+    const val = await redisClient.del(req.query.key);
+    console.log(redisClient.cache);
+    res.status(200).send({
+      status: 200,
+      success: true,
+      message: "",
+      data: { val },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send({
+      status: 500,
+      success: false,
+      message: e.message,
+      data: {},
+    });
+  }
+});
+
 app.all("*", (req, res, next) => {
   return res.status(404).json({
     status: 404,
