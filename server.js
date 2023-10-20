@@ -1,102 +1,105 @@
-const express = require('express');
-const redis = require('redis');
-const cors = require('cors');
+const express = require("express");
+const redis = require("redis");
+const cors = require("cors");
 
 class MockRedis {
-    constructor() {
-        this.cache = {}
-    }
+  constructor() {
+    this.cache = {};
+  }
 
-    set(k, v, cb) {
-        this.cache[k] = v
-        if(cb) cb()
-    }
+  set(k, v, cb) {
+    this.cache[k] = v;
+    if (cb) cb();
+  }
 
-    async get(k) {
-        return this.cache[k] ?? null
-    }
+  async get(k) {
+    return this.cache[k] ?? null;
+  }
 
-    on() {}
-    
+  on() {}
 }
 
-const redisClient = new MockRedis()
+const redisClient = redis.createClient();
 
-redisClient.on('error', (err) => {
-    console.log('Error occured while connecting or accessing redis server');
+redisClient.on("error", (err) => {
+  console.log("Error occured while connecting or accessing redis server");
 });
 
 (async () => {
-    if(!(await redisClient.get('customer_name',redis.print))) {
-        //create a new record
-        await redisClient.set('customer_name','John Doe', redis.print);
-        console.log('Writing Property : customer_name');
-    } else {
-        let val = await redisClient.get('customer_name',redis.print);
-        console.log(`Reading property : customer_name - ${val}`);
-    }
-})()
+  if (!(await redisClient.get("customer_name", redis.print))) {
+    //create a new record
+    await redisClient.set("customer_name", "John Doe", redis.print);
+    console.log("Writing Property : customer_name");
+  } else {
+    let val = await redisClient.get("customer_name", redis.print);
+    console.log(`Reading property : customer_name - ${val}`);
+  }
+})();
 
-const PORT = 4500;
+const PORT = 4700;
 
 const app = express();
 const router = express.Router();
 
-app.use(cors({
-    origin: "*"
-}));
-app.use(express.json({limit: "500mb"}));
-app.use(express.urlencoded({limit: "500mb", extended: true, parameterLimit:500000}));
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+app.use(express.json({ limit: "500mb" }));
+app.use(
+  express.urlencoded({ limit: "500mb", extended: true, parameterLimit: 500000 })
+);
 app.use(router);
 
-router.get('/', (req,res) => {
-    res.status(200).json({
-        message : "Sample Docker Redis Application"
-    });
+router.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Sample Docker Redis Application",
+  });
 });
 
 router.get("/get", async (req, res) => {
-    try {
-        console.log("HIT GET /get", req.query)
-        const val = await redisClient.get(decodeURIComponent(req.query.key))
-        res.status(200).send({
-            status: 200,
-            success: true,
-            message: "",
-            data: { val },
-        })  
-    } catch (e) {
-        console.log(e)
-        res.status(500).send({
-            status: 500,
-            success: false,
-            message: e.message,
-            data: {},
-        })
-    }
-})
+  try {
+    console.log("HIT GET /get", req.query);
+    const val = await redisClient.get(decodeURIComponent(req.query.key));
+    res.status(200).send({
+      status: 200,
+      success: true,
+      message: "",
+      data: { val },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send({
+      status: 500,
+      success: false,
+      message: e.message,
+      data: {},
+    });
+  }
+});
 
 router.post("/set", async (req, res) => {
-    try {
-        console.log("HIT GET /set", req.query)
-        const val = await redisClient.set(req.body.key, req.body.value)
-        console.log(redisClient.cache)
-        res.status(200).send({
-            status: 200,
-            success: true,
-            message: "",
-            data: { val },
-        })
-    } catch (e) {
-        console.log(e)
-        res.status(500).send({
-            status: 500,
-            success: false,
-            message: e.message,
-            data: {},
-        })
-    }
-})
+  try {
+    console.log("HIT GET /set", req.query);
+    const val = await redisClient.set(req.body.key, req.body.value);
+    console.log(redisClient.cache);
+    res.status(200).send({
+      status: 200,
+      success: true,
+      message: "",
+      data: { val },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send({
+      status: 500,
+      success: false,
+      message: e.message,
+      data: {},
+    });
+  }
+});
 
 app.all("*", (req, res, next) => {
   return res.status(404).json({
@@ -107,7 +110,6 @@ app.all("*", (req, res, next) => {
   });
 });
 
-
 app.listen(PORT, () => {
-    console.log(`Server running on PORT ${PORT}`);
+  console.log(`Server running on PORT ${PORT}`);
 });
